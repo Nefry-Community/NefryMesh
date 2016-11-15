@@ -1,6 +1,6 @@
 #include <ESP8266WiFi.h>
 #include "NefryMesh.h"
-
+#include <Nefry.h>
 unsigned int request_i = 0;
 unsigned int response_i = 0;
 
@@ -18,12 +18,12 @@ NefryMesh mesh_node = NefryMesh(ESP.getChipId(), manageRequest,'c');
 String manageRequest(String request)
 {
 	/* Print out received message */
-	Serial.print("received: ");
-	Serial.println(request);
+	Nefry.print("received: ");
+	Nefry.println(request);
 
 	/* return a string to send back */
 	char response[60];
-	sprintf(response, "Hello world response #%d from Mesh_Node%d.", response_i++, ESP.getChipId());
+	sprintf(response, "Hello world Nefry world!!! #%d from Mesh_Node%d.", response_i++, ESP.getChipId());
 	return response;
 }
 
@@ -43,11 +43,11 @@ void setup()
 void loop()
 {
 	/* Accept any incoming connections */
-	mesh_node.acceptRequest();
+	mesh_node.loop();
 
 	/* Scan for other nodes and send them a message */
 	char request[60];
 	sprintf(request, "Hello world request #%d from Mesh_Node%d.", request_i++, ESP.getChipId());
-	mesh_node.attemptScan(request);
+	mesh_node.sendMessage(request);
 	Nefry.ndelay(1000);
 }
