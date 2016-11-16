@@ -123,23 +123,29 @@ void NefryMesh::connectToNode(String target_ssid, String message)
 
 void NefryMesh::sendMessage(String message)
 {
-	/* Scan for APs */
-	int n = WiFi.scanNetworks();
+	if (_mode != 'c') {
+		/* Scan for APs */
+		int n = WiFi.scanNetworks();
 
-	for (int i = 0; i < n; ++i) {
-		String current_ssid = WiFi.SSID(i);
-		int index = current_ssid.indexOf( _ssid_prefix +'c');
-		index += current_ssid.indexOf(_ssid_prefix + 'r');
+		for (int i = 0; i < n; ++i) {
+			String current_ssid = WiFi.SSID(i);
+			int index = current_ssid.indexOf(_ssid_prefix + 'c');
+			index += current_ssid.indexOf(_ssid_prefix + 'r');
 
-		/* Connect to any _suitable_ APs which contain _ssid_prefix */
-		if (index >= 0) {
-			Nefry.println(current_ssid);
-			WiFi.mode(WIFI_STA);
-			delay(100);
-			connectToNode(current_ssid, message);
-			WiFi.mode(WIFI_AP_STA);
-			delay(100);
+			/* Connect to any _suitable_ APs which contain _ssid_prefix */
+			if (index >= 0) {
+				Nefry.println(current_ssid);
+				WiFi.mode(WIFI_STA);
+				delay(100);
+				connectToNode(current_ssid, message);
+				WiFi.mode(WIFI_AP_STA);
+				delay(100);
+			}
 		}
+	}
+	else {
+		if (_client.connected())
+			_client.println(message);
 	}
 }
 
